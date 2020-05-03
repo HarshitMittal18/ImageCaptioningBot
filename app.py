@@ -1,0 +1,29 @@
+from flask import Flask,redirect,render_template,request
+import caption_it
+
+app = Flask(__name__)
+
+@app.route('/')
+def start():
+	return render_template("index.html")
+
+@app.route('/', methods = ['POST'])
+def home():
+	if request.method == "POST":
+		f = request.files['userfile']
+		path = "./static/{}".format(f.filename)
+		f.save(path)
+
+		caption = caption_it.caption_this_image(path)
+
+		result_dic = {
+		"image": path,
+		"captions": caption
+		}
+
+	return render_template("index.html", your_result = result_dic)
+
+
+
+if __name__ == '__main__':
+	app.run(debug=True)
